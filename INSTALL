@@ -1,6 +1,7 @@
 Required PHP extensions
 
 * php5-imap
+* php5-pcntl
 
 Install PEAR Packages for phpcclib (PHP cloudControl library)
 
