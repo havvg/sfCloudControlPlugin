@@ -1,0 +1,15 @@
+h1. Dependencies
+
+h2. Required PHP extensions
+
+* php5-imap
+* php5-pcntl
+
+h2. PEAR Packages for phpcclib (PHP cloudControl library)
+
+* pear config-set preferred_state alpha
+* pear install HTTP_Request2
+
+h1. Installation
+
+The plugin does not require any additional installation, just enable it in your ProjectConfiguration, you are done!

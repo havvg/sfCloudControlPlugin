@@ -1,0 +1,7 @@
+h1. sfCloudControlPlugin
+
+This plugin adds support and wrappers to the cloudControl library.
+
+h2. Stability
+
+*This plugin is not production-ready! Things will change.*

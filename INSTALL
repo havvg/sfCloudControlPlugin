@@ -1,9 +1,0 @@
-Required PHP extensions
-
-* php5-imap
-* php5-pcntl
-
-Install PEAR Packages for phpcclib (PHP cloudControl library)
-
-* pear config-set preferred_state alpha
-* pear install HTTP_Request2
