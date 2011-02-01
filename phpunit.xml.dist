@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+  colors="false"
+  convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true"
+  convertWarningsToExceptions="true"
+  stopOnFailure="true">
+    
+  <filter>
+    <blacklist>
+      <directory>config</directory>
+      <file>*.yml</file>
+    </blacklist>
+  </filter>
+
+  <testsuites>
+    <testsuite name="Unit Tests">
+      <directory>test/unit/</directory>
+      <file>lib/vendor/cron/CronParserTest.php</file>
+    </testsuite>
+  </testsuites>
+</phpunit>
