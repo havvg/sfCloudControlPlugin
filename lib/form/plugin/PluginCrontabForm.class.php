@@ -2,6 +2,15 @@
 
 class PluginCrontabForm extends BaseCrontabForm
 {
+  /**
+   * Adjusts the configuration for plugin usage.
+   *
+   * @uses CronScheduleValidator
+   *
+   * @see sfForm::configure()
+   *
+   * @return void
+   */
   public function configure()
   {
     $this->setWidget('last_run_at', new sfWidgetFormDateTime(array('default' => date('Y-m-d H:i:s'))));

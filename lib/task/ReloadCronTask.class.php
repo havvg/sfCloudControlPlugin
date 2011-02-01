@@ -13,8 +13,6 @@ class ReloadCronTask extends CloudControlBaseTask
    *
    * @uses pcntl_signal()
    *
-   * @see lib/task/Task#configure()
-   *
    * @return void
    */
   protected function configure()

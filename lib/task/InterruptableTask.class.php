@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This task provides methods to be interrupted be registered a signal handler.
+ * This task provides methods to be interrupted by a registered signal handler.
  *
  * @uses pcntl_signal()
  */

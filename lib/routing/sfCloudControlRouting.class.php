@@ -2,6 +2,13 @@
 
 class sfCloudControlRouting
 {
+  /**
+   * Prepends the route for the sfCCCrontab admin module.
+   *
+   * @param sfEvent $event
+   *
+   * @return void
+   */
   public static function addRouteForAdminCrontab(sfEvent $event)
   {
     $event->getSubject()->prependRoute('sf_cccrontab', new sfPropelRouteCollection(array(

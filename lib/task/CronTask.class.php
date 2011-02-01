@@ -43,8 +43,6 @@ class CronTask extends LoopTask
    *
    * @uses pcntl_signal()
    *
-   * @see lib/task/Task#configure()
-   *
    * @return void
    */
   protected function configure()
@@ -76,7 +74,7 @@ class CronTask extends LoopTask
    */
   protected function reload($signal)
   {
-    $this->logSection($this->namespace, sprintf('Received signal "%d"', $signal));
+    $this->logSection($this->namespace, sprintf('Received signal "%d".', $signal));
     $this->reloadSchedule();
   }
 
@@ -99,7 +97,7 @@ class CronTask extends LoopTask
   /**
    * Creates a database manager for the current configuration.
    *
-   * @param array $options
+   * @param array $options Options passed to the sfDatabaseManager.
    *
    * @return CronTask $this
    */
@@ -133,7 +131,7 @@ class CronTask extends LoopTask
   }
 
   /**
-   * Return the cloudControl wrapper.
+   * Returns the cloudControl wrapper.
    *
    * @return sfCloudControl
    */
@@ -160,7 +158,10 @@ class CronTask extends LoopTask
   }
 
   /**
-   * (non-PHPdoc)
+   * The task is requested to shutdown.
+   *
+   * Shuts down the sfDatabaseManager and remove the PID file.
+   *
    * @see InterruptableTask::shutdown()
    */
   protected function shutdown()
@@ -170,7 +171,7 @@ class CronTask extends LoopTask
   }
 
   /**
-   * Return the filename for the PID file.
+   * Returns the filename for the PID file.
    *
    * @param sfApplicationConfiguration $configuration
    *
@@ -204,7 +205,12 @@ class CronTask extends LoopTask
   }
 
   /**
-   * Creates database connection to read the cron table.
+   * Sets up the cron with the current configuration.
+   *
+   * * Creates database manager.
+   * * Loads cron schedule.
+   * * Creates a cloudControl wrapper.
+   * * Sets the PID file.
    *
    * @uses posix_getpid()
    *

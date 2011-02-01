@@ -3,7 +3,7 @@
 /**
  * This task is running infinitely.
  *
- * This class adds methods to interact with the looping: preExecute, postExecute, continue.
+ * This class adds methods to interact with the looping: preExecute, postExecute, loop.
  */
 abstract class LoopTask extends CloudControlBaseTask
 {
@@ -21,6 +21,8 @@ abstract class LoopTask extends CloudControlBaseTask
 
   /**
    * A method called once after completing the looping task.
+   *
+   * This method will NOT be called, if the task is interrupted!
    *
    * @return void
    */

@@ -2,6 +2,8 @@
 
 /**
  * This is wrapper for some phpcclib methods.
+ *
+ * @uses CCAPI
  */
 class sfCloudControl
 {
@@ -13,9 +15,9 @@ class sfCloudControl
   protected $configuration;
 
   /**
-   * A reference to the CCApi of the phpcclib.
+   * A reference to the CCAPI of the phpcclib.
    *
-   * @var CCApi
+   * @var CCAPI
    */
   protected $ccApi;
 
@@ -51,7 +53,7 @@ class sfCloudControl
   }
 
   /**
-   * Initializes the cloudControl wrapper by creating the CCApi based on the provided configuration.
+   * Initializes the cloudControl wrapper by creating the CCAPI based on the provided configuration.
    *
    * @return sfCloudControl $this
    */
@@ -75,9 +77,9 @@ class sfCloudControl
   }
 
   /**
-   * Returns the current used CCApi object.
+   * Returns the current used CCAPI object.
    *
-   * @return CCApi
+   * @return CCAPI
    */
   public function getApi()
   {
@@ -85,7 +87,7 @@ class sfCloudControl
   }
 
   /**
-   * Add a worker with the given command line.
+   * Adds a worker with the given command line.
    *
    * @param string $commandLine
    *

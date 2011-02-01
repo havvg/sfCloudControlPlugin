@@ -20,6 +20,8 @@ class CronScheduleValidator extends sfValidatorBase
   /**
    * Checks whether the given value is a cron schedule string.
    *
+   * @uses CronParser
+   *
    * @throws sfValidatorError
    *
    * @param string $value The value to be validated as a cron schedule string.
