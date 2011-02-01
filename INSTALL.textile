@@ -1,15 +1,31 @@
-h1. Dependencies
+h1. Installation
 
-h2. Required PHP extensions
+There is little configuration required in order to get this plugin working.
+To install the plugin, you only have to enable it in your ProjectConfiguration.
+
+h2. Dependencies
+
+h3. Required PHP extensions
 
 * php5-imap
 * php5-pcntl
 
-h2. PEAR Packages for phpcclib (PHP cloudControl library)
+h3. Required PEAR packages for phpcclib (PHP cloudControl library)
 
 * pear config-set preferred_state alpha
 * pear install HTTP_Request2
 
-h1. Installation
+h2. CloudControl configuration
 
-The plugin does not require any additional installation, just enable it in your ProjectConfiguration, you are done!
+In order to have the cloudControl API working, you need to configure the following four items in your app.yml.
+
+* cloudcontrol_application
+* cloudcontrol_deployment
+* cloudcontrol_email
+* cloudcontrol_password
+
+h2. Available modules
+
+h3. sfCCCrontab
+
+This module is a generated admin module for backend purposes. Enable this module only on a secure environment, as it provides mechanism to add workers on your cloudControl account. As a precaution this module is set to be secure. To override this, add a security.yml to your application settings e.g. app/backend/modules/sfCCCrontab/config/security.yml.
