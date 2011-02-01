@@ -1,0 +1,21 @@
+propel:
+  _attributes:
+    package: plugins.sfCloudControlPlugin.lib.model
+    
+  crontab:
+    id: ~
+    name:
+      index: unique
+      primaryString: true
+      required: true
+      type: varchar(255)
+    schedule:
+      required: true
+      type: varchar(255)
+    command_line:
+      required: true
+      type: varchar(255)
+    last_run_at:
+      required: true
+      type: timestamp
+    

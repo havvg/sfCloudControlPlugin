@@ -1,0 +1,26 @@
+generator:
+  class: sfPropelGenerator
+  param:
+    model_class:           Crontab
+    theme:                 admin15
+    non_verbose_templates: true
+    with_show:             false
+    singular:              CrontabEntry
+    plural:                CrontabEntries
+    route_prefix:          sf_cccrontab
+    with_propel_route:     1
+    actions_base_class:    sfActions
+
+    config:
+      actions: ~
+      fields:  ~
+      list:
+        display:
+          - id
+          - =name
+          - schedule
+          - command_line
+      filter:  ~
+      form:    ~
+      edit:    ~
+      new:     ~
