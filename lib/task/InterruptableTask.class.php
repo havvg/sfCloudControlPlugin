@@ -47,16 +47,17 @@ abstract class InterruptableTask extends sfBaseTask
   }
 
   /**
-   * Constructor.
+   * Set up the shutdown interrupt, before running the task.
    *
-   * @param sfEventDispatcher $dispatcher
-   * @param sfFormatter $formatter
+   * @see BaseTask::doRun()
+   *
+   * @return int
    */
-  public function __construct(sfEventDispatcher $dispatcher, sfFormatter $formatter)
+  public function runFromCLI(sfCommandManager $commandManager, $options = null)
   {
     declare(ticks = 1);
     pcntl_signal(self::INTERRUPT, array(&$this, 'doShutdown'));
 
-    parent::__construct($dispatcher, $formatter);
+    return parent::runFromCLI($commandManager, $options);
   }
 }
