@@ -267,6 +267,8 @@ class CronTask extends LoopTask
           ;
         }
       }
+
+      sleep(60);
     }
   }
 }

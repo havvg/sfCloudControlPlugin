@@ -166,6 +166,7 @@ class CronParser
      */
     public function isDue($lastRun = 'now', $currentTime = 'now')
     {
+        $currentTime = ($currentTime instanceof DateTime) ? $currentTime : new DateTime($currentTime ?: 'now');
         return ($this->getNextRunDate($lastRun, $currentTime) != $this->getNextRunDate($currentTime, $currentTime));
     }
 }
