@@ -29,3 +29,13 @@ h2. Available modules
 h3. sfCCCrontab
 
 This module is a generated admin module for backend purposes. Enable this module only on a secure environment, as it provides mechanism to add workers on your cloudControl account. As a precaution this module is set to be secure. To override this, add a security.yml to your application settings e.g. app/backend/modules/sfCCCrontab/config/security.yml.
+
+h1. Testing in your environment
+
+h2. Dependencies
+
+In order to be able to run the tests, the sfPHPUnit2Plugin is required. This implies the requirement of PHPUnit itself.
+
+h2. Running the tests
+
+If you want to run the tests of provided, drop the plugin into your projects plugin directory. Afterwards point your command line to the root directory of this plugin and execute PHPUnit. To adjust settings, overwrite the distributed phpunit.xml.dist by creating a phpunit.xml file. 

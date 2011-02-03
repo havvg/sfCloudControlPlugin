@@ -4,4 +4,10 @@ This plugin adds support and wrappers to the cloudControl library.
 
 h2. Stability
 
-*This plugin is not production-ready! Things will change.*
+This plugin *is not production-ready*! Things will change.
+
+Currently stabilizing by adding tests. Changes to the current API may occur.
+
+h3. Tests
+
+Tests are on the way, step by step. Used testing framework: PHPUnit 3.5.5

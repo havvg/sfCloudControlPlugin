@@ -59,7 +59,7 @@ class PluginCrontab extends BaseCrontab
    */
   public function save(PropelPDO $con = null)
   {
-    $reAttach = $this->isColumnModified(CrontabPeer::SCHEDULE);
+    $reAttach = ($this->isNew() or $this->isColumnModified(CrontabPeer::SCHEDULE));
 
     if ($result = parent::save($con) and $reAttach)
     {
