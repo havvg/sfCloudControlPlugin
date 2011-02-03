@@ -8,6 +8,44 @@
 abstract class LoopTask extends CloudControlBaseTask
 {
   /**
+   * A flag indicating whether the loop shall continue;
+   *
+   * @var bool
+   */
+  private $loop = true;
+
+  /**
+   * Set the loop flag. If false, the loop will cancel.
+   *
+   * @throws InvalidArgumentException
+   *
+   * @param bool $loop
+   *
+   * @return LoopTask $this
+   */
+  final protected function setLoop($loop)
+  {
+    if (!is_bool($loop))
+    {
+      throw new InvalidArgumentException('The given flag is no valid boolean.');
+    }
+
+    $this->loop = $loop;
+
+    return $this;
+  }
+
+  /**
+   * Returns the current loop flag.
+   *
+   * @return bool
+   */
+  final protected function getLoop()
+  {
+    return $this->loop;
+  }
+
+  /**
    * A method called once before the execution of the looping task.
    *
    * This method should be used to configure database connections and other environment dependent settings.
@@ -29,25 +67,14 @@ abstract class LoopTask extends CloudControlBaseTask
   protected function postExecute() {}
 
   /**
-   * This method is called each time before continue the loop.
-   *
-   * The loop will cancel, if this method returns false.
-   *
-   * @return bool
-   */
-  protected function loop()
-  {
-    return true;
-  }
-
-  /**
    * Processing the defined task.
    *
    * @uses LoopTask::preExecute() Before running the infinite loop, this method is called once.
-   * @uses LoopTask::loop() This method is called every time the loop is about to run and will cancel the loop, if false is returned.
+   * @uses LoopTask::getLoop() This method is called every time the loop is about to run and will cancel the loop, if false is returned.
    * @uses LoopTask::postExecute() This method is called once after the loop has been completed.
    *
    * @see sfBaseTask::doRun()
+   * @see LoopTask::setLoop()
    *
    * @param sfCommandManager $commandManager
    * @param mixed $options
@@ -96,7 +123,7 @@ abstract class LoopTask extends CloudControlBaseTask
 
     $this->preExecute($commandManager->getArgumentValues(), $commandManager->getOptionValues());
 
-    while ($this->loop())
+    while ($this->getLoop())
     {
       $this->execute($commandManager->getArgumentValues(), $commandManager->getOptionValues());
     }
