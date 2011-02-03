@@ -16,7 +16,6 @@
   <testsuites>
     <testsuite name="Unit Tests">
       <directory>test/unit/</directory>
-      <file>lib/vendor/cron/CronParserTest.php</file>
     </testsuite>
   </testsuites>
 </phpunit>

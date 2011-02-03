@@ -1,0 +1,3 @@
+[submodule "lib/vendor/CronParser"]
+	path = lib/vendor/CronParser
+	url = git://github.com/havvg/CronParser.git

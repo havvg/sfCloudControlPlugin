@@ -3,3 +3,4 @@ autoload:
     name:           sfCloudControlPlugin vendor libs
     path:           %SF_PLUGINS_DIR%/sfCloudControlPlugin/lib/vendor
     recursive:      true
+    exclude:        test
