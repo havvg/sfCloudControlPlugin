@@ -259,7 +259,8 @@ class CronTask extends LoopTask
         /* @var $eachCron Crontab */
         if ($eachCron->isDue())
         {
-          $this->getCloudControl()->addWorker($eachCron->getCommandLine());
+          $this->logSection($this->namespace, sprintf('Running command line: %s %s', $eachCron->getCommand(), $eachCron->getParameters()), null, 'INFO');
+          $this->getCloudControl()->addWorker($eachCron->getCommand(), $eachCron->getParameters());
 
           $eachCron
             ->setLastRunAt(new DateTime())

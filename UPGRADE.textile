@@ -1,0 +1,12 @@
+h1. Upgrade
+
+h2. Migrating database changes
+
+h3. sfPropelMigrationsLightPlugin
+
+All changes to the databases are provided in a sfPropelMigrationsLightPlugin friendly way.
+In order to use these migrations, "load the required migration":https://gist.github.com/823952 of this plugin into a new migration of your application and run the up() or down() of the plugins migration.
+
+h3. SQL changes
+
+All changes are given in a command line interface friendly SQL file located in the data/migrations directory of this plugin. Use these if you want to integrate the SQL changes in any kind of continuous deployment process.

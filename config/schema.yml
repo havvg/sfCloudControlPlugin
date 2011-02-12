@@ -12,8 +12,12 @@ propel:
     schedule:
       required: true
       type: varchar(255)
-    command_line:
+    command:
       required: true
+      type: varchar(255)
+    parameters:
+      default: null
+      required: false
       type: varchar(255)
     last_run_at:
       required: true

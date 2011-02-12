@@ -12,7 +12,8 @@ class CrontabTest extends sfPHPUnitBaseCloudControlPluginTestCase
     $cron = new Crontab();
     $cron
       ->setName('Created Test Entry')
-      ->setCommandLine('symfony --version')
+      ->setCommand('symfony')
+      ->setParameters('cache:clear --env=test')
       ->setSchedule('* * * * *')
       ->setLastRunAt(new DateTime('-10 minutes'))
       ->save()

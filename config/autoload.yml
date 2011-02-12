@@ -4,3 +4,7 @@ autoload:
     path:           %SF_PLUGINS_DIR%/sfCloudControlPlugin/lib/vendor
     recursive:      true
     exclude:        test
+  sfCloudControlPlugin_migrations:
+    name:           sfCloudControlPlugin database migrations
+    path:           %SF_PLUGINS_DIR%/sfCloudControlPlugin/data/migrations
+    recursive:      false

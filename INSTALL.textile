@@ -38,4 +38,8 @@ In order to be able to run the tests, the sfPHPUnit2Plugin is required. This imp
 
 h2. Running the tests
 
-If you want to run the tests of provided, drop the plugin into your projects plugin directory. Afterwards point your command line to the root directory of this plugin and execute PHPUnit. To adjust settings, overwrite the distributed phpunit.xml.dist by creating a phpunit.xml file. 
+If you want to run the tests of provided, drop the plugin into your projects plugin directory. Afterwards point your command line to the root directory of this plugin and execute PHPUnit. To adjust settings, overwrite the distributed phpunit.xml.dist by creating a phpunit.xml file.
+
+h1. Upgrading
+
+See UPGRADE.textile for more information on how to upgrade this plugin.

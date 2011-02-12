@@ -19,7 +19,8 @@ generator:
           - id
           - =name
           - schedule
-          - command_line
+          - command
+          - parameters
       filter:  ~
       form:    ~
       edit:    ~

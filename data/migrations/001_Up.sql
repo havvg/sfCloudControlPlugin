@@ -1,0 +1,2 @@
+ALTER TABLE `crontab` CHANGE `command_line` `command` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+ALTER TABLE `crontab` ADD `parameters` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL AFTER `command`;

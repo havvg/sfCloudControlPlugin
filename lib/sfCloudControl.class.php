@@ -89,12 +89,13 @@ class sfCloudControl
   /**
    * Adds a worker with the given command line.
    *
-   * @param string $commandLine
+   * @param string $command
+   * @param string $parameters
    *
    * @return stdClass Information about the worker added.
    */
-  public function addWorker($commandLine)
+  public function addWorker($command, $parameters)
   {
-    return $this->getApi()->addWorker($this->getConfiguration()->getApplicationName(), $this->getConfiguration()->getDeploymentName(), $commandLine);
+    return $this->getApi()->addWorker($this->getConfiguration()->getApplicationName(), $this->getConfiguration()->getDeploymentName(), $command, $parameters);
   }
 }
