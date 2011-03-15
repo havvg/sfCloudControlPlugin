@@ -12,8 +12,8 @@ class LoopTaskTest extends sfPHPUnitBaseCloudControlPluginTestCase
   }
 
   /**
-   * @covers LoopTask::setLoop()
-   * @covers LoopTask::getLoop()
+   * @covers LoopTask::setLoop
+   * @covers LoopTask::getLoop
    */
   public function testLoop()
   {

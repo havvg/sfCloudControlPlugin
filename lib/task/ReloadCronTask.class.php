@@ -4,14 +4,14 @@ class ReloadCronTask extends CloudControlBaseTask
 {
   /**
    * (non-PHPdoc)
-   * @see InterruptableTask::shutdown()
+   * @see InterruptableTask::shutdown
    */
   protected function shutdown() {}
 
   /**
    * Set up information about this task.
    *
-   * @uses pcntl_signal()
+   * @uses pcntl_signal
    *
    * @return void
    */

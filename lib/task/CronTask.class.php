@@ -41,7 +41,7 @@ class CronTask extends LoopTask
   /**
    * Set up information about this task.
    *
-   * @uses pcntl_signal()
+   * @uses pcntl_signal
    *
    * @return void
    */
@@ -162,7 +162,7 @@ class CronTask extends LoopTask
    *
    * Shuts down the sfDatabaseManager and remove the PID file.
    *
-   * @see InterruptableTask::shutdown()
+   * @see InterruptableTask::shutdown
    */
   protected function shutdown()
   {
@@ -212,9 +212,9 @@ class CronTask extends LoopTask
    * * Creates a cloudControl wrapper.
    * * Sets the PID file.
    *
-   * @uses posix_getpid()
+   * @uses posix_getpid
    *
-   * @see LoopTask::preExecute()
+   * @see LoopTask::preExecute
    *
    * @param array $arguments
    * @param array $options

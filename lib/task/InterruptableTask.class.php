@@ -49,7 +49,7 @@ abstract class InterruptableTask extends sfBaseTask
   /**
    * Set up the shutdown interrupt, before running the task.
    *
-   * @see BaseTask::doRun()
+   * @see BaseTask::doRun
    *
    * @return int
    */

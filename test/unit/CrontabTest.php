@@ -5,7 +5,7 @@ require_once dirname(__FILE__) . '/../bootstrap/unit.php';
 class CrontabTest extends sfPHPUnitBaseCloudControlPluginTestCase
 {
   /**
-   * @covers Crontab::isDue()
+   * @covers Crontab::isDue
    */
   public function testIsDue()
   {
