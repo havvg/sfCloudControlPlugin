@@ -7,13 +7,17 @@ h2. Dependencies
 
 h3. Required PHP extensions
 
-* php5-imap
-* php5-pcntl
+* imap
+* pcntl
 
 h3. Required PEAR packages for phpcclib (PHP cloudControl library)
 
 * pear config-set preferred_state alpha
 * pear install HTTP_Request2
+
+h3. Optional PHP extensions
+
+* memcached (required by sfMemcachedSaslCache)
 
 h2. CloudControl configuration
 
@@ -29,6 +33,44 @@ h2. Available modules
 h3. sfCCCrontab
 
 This module is a generated admin module for backend purposes. Enable this module only on a secure environment, as it provides mechanism to add workers on your cloudControl account. As a precaution this module is set to be secure. To override this, add a security.yml to your application settings e.g. app/backend/modules/sfCCCrontab/config/security.yml.
+
+h2. Avaiable libraries
+
+h3. sfMemcachedSaslCache
+
+The sfMemcachedSaslCache supports the authentication of memcached on the cloudControl platform. It checks for required authentication and the existing method.
+
+An example configuration for the routing cache without any authentication:
+
+<pre>
+  routing:
+    class: sfPatternRouting
+    param:
+      generate_shortest_url:            true
+      extra_parameters_as_query_string: true
+      debug: false
+      cache:
+        class: sfMemcachedSaslCache
+        param: []
+</pre>
+
+An example configuration leveraging the patched version of cloudControl including SASL.
+
+<pre>
+  routing:
+    class: sfPatternRouting
+    param:
+      generate_shortest_url:            true
+      extra_parameters_as_query_string: true
+      debug: false
+      cache:
+        class: sfMemcachedSaslCache
+        param:
+          host: 127.0.0.1
+          port: 11211
+          username: yourusername
+          password: yours3cr3tpassword
+</pre>
 
 h1. Testing in your environment
 
