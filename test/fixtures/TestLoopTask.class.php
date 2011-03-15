@@ -11,7 +11,7 @@ class TestLoopTask extends LoopTask
     $this->detailedDescription = 'Does nothing.';
   }
 
-  protected function shutdown() {}
+  protected function doShutdown() {}
 
   protected function execute($arguments = array(), $options = array()) {}
 

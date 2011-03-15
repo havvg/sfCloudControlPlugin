@@ -18,7 +18,7 @@ class UselessLoopTask extends LoopTask
     $this->detailedDescription = 'This task knows how to count - really, ask it!';
   }
 
-  protected function shutdown()
+  protected function doShutdown()
   {
     $this->logSection($this->namespace, 'UselessLoopTask shutting down nicely.');
 

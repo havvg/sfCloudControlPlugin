@@ -26,18 +26,18 @@ abstract class InterruptableTask extends sfBaseTask
    *
    * An implementation of this method should consider to alter the returned exit code.
    */
-  abstract protected function shutdown();
+  abstract protected function doShutdown();
 
   /**
    * Internal method to call the shutdown method and exit this script correctly.
    *
    * @param int $signal The retrieved signal.
    */
-  final protected function doShutdown($signal)
+  final public function shutdown($signal)
   {
     $this->logSection($this->namespace, sprintf('Received signal "%d"', $signal));
 
-    $this->shutdown();
+    $this->doShutdown();
 
     $this->dispatcher->notify(new sfEvent($this, 'command.post_command'));
 
@@ -56,7 +56,7 @@ abstract class InterruptableTask extends sfBaseTask
   public function runFromCLI(sfCommandManager $commandManager, $options = null)
   {
     declare(ticks = 1);
-    pcntl_signal(self::INTERRUPT, array(&$this, 'doShutdown'));
+    pcntl_signal(self::INTERRUPT, array(&$this, 'shutdown'));
 
     return parent::runFromCLI($commandManager, $options);
   }

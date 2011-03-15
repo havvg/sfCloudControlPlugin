@@ -72,7 +72,7 @@ class CronTask extends LoopTask
    *
    * @return void
    */
-  protected function reload($signal)
+  public function reload($signal)
   {
     $this->logSection($this->namespace, sprintf('Received signal "%d".', $signal));
     $this->reloadSchedule();
@@ -162,9 +162,9 @@ class CronTask extends LoopTask
    *
    * Shuts down the sfDatabaseManager and remove the PID file.
    *
-   * @see InterruptableTask::shutdown
+   * @see InterruptableTask::doShutdown
    */
-  protected function shutdown()
+  protected function doShutdown()
   {
     $this->getDatabaseManager()->shutdown();
     $this->getFilesystem()->remove($this->getPIDFilename($this->configuration));

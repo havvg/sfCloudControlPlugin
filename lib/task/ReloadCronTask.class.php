@@ -6,7 +6,7 @@ class ReloadCronTask extends CloudControlBaseTask
    * (non-PHPdoc)
    * @see InterruptableTask::shutdown
    */
-  protected function shutdown() {}
+  protected function doShutdown() {}
 
   /**
    * Set up information about this task.
