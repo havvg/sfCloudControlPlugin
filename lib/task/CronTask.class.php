@@ -169,7 +169,7 @@ class CronTask extends LoopTask
   protected function doShutdown()
   {
     $this->getDatabaseManager()->shutdown();
-    $this->getFilesystem()->remove($this->getPIDFilename($this->configuration));
+    $this->getFilesystem()->remove(self::getPIDFilename($this->configuration));
   }
 
   /**
@@ -245,7 +245,7 @@ class CronTask extends LoopTask
       ->createCloudControl()
     ;
 
-    $filename = $this->getPIDFilename($this->configuration);
+    $filename = self::getPIDFilename($this->configuration);
 
     $this->getFilesystem()->mkdirs(dirname($filename));
     $this->getFilesystem()->touch($filename);
