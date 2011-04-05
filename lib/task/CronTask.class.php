@@ -10,6 +10,8 @@ class CronTask extends LoopTask
 {
   const EXCEPTION_NO_PROCESS = 'There is no cron process running.';
 
+  const EXCEPTION_PROCESS_ALREADY_RUNNING = 'There already is a cron running.';
+
   /**
    * The interrupt defined to reload schedule.
    *
@@ -223,6 +225,20 @@ class CronTask extends LoopTask
    */
   protected function preExecute($arguments = array(), $options = array())
   {
+    try
+    {
+      self::getPID($this->configuration);
+
+      throw new RuntimeException(self::EXCEPTION_PROCESS_ALREADY_RUNNING);
+    }
+    catch (RuntimeException $e)
+    {
+      if ($e->getMessage() !== self::EXCEPTION_NO_PROCESS)
+      {
+        throw $e;
+      }
+    }
+
     $this
       ->createDatabaseManager()
       ->reloadSchedule()
