@@ -13,13 +13,6 @@ class CronTask extends LoopTask
   const EXCEPTION_PROCESS_ALREADY_RUNNING = 'There already is a cron running.';
 
   /**
-   * The interrupt defined to reload schedule.
-   *
-   * @var int
-   */
-  const RELOAD_INTERRUPT = SIGUSR2;
-
-  /**
    * A reference to the database manager.
    *
    * @var sfDatabaseManager
@@ -61,23 +54,8 @@ class CronTask extends LoopTask
     $this->briefDescription = 'Runs the cron table.';
     $this->detailedDescription = 'This task is used to check whether there is a task scheduled and will call the worker API of cloudControl to execute the given task.';
 
-    pcntl_signal(self::RELOAD_INTERRUPT, array(&$this, 'reload'));
-
     // Please restart this task, if it ends.
     $this->setReturnCode(CloudControlBaseTask::RETURN_CODE_ERROR_RESTART);
-  }
-
-  /**
-   * This method is called whenever the RELOAD_INTERRUPT is received.
-   *
-   * @param int $signal
-   *
-   * @return void
-   */
-  public function reload($signal)
-  {
-    $this->logSection($this->namespace, sprintf('Received signal "%d".', $signal));
-    $this->reloadSchedule();
   }
 
   /**
@@ -92,6 +70,11 @@ class CronTask extends LoopTask
     CrontabPeer::clearInstancePool();
 
     $this->schedule = CrontabPeer::retrieveAll();
+
+    if (file_exists(ReloadCronTask::getReloadFilename($this->configuration)))
+    {
+      $this->getFilesystem()->remove(ReloadCronTask::getReloadFilename($this->configuration));
+    }
 
     return $this;
   }
@@ -123,7 +106,7 @@ class CronTask extends LoopTask
   /**
    * Creates a cloudControl wrapper for further usage.
    *
-   * @return $this
+   * @return CronTask $this
    */
   protected function createCloudControl()
   {
@@ -181,7 +164,7 @@ class CronTask extends LoopTask
    */
   public static function getPIDFilename(sfApplicationConfiguration $configuration)
   {
-    return realpath(getenv('TMPDIR')) . DIRECTORY_SEPARATOR . $configuration->getApplication() . DIRECTORY_SEPARATOR . $configuration->getEnvironment() . DIRECTORY_SEPARATOR . 'cloudcontrol_cron.pid';
+    return CloudControlBaseTask::getSharedTempDirectory() . DIRECTORY_SEPARATOR . $configuration->getApplication() . DIRECTORY_SEPARATOR . $configuration->getEnvironment() . DIRECTORY_SEPARATOR . 'cloudcontrol_cron.pid';
   }
 
   /**
@@ -204,6 +187,16 @@ class CronTask extends LoopTask
     {
       throw new RuntimeException(self::EXCEPTION_NO_PROCESS);
     }
+  }
+
+  /**
+   * Check whether the cron is required to reload its schedule.
+   *
+   * @return bool
+   */
+  protected function isReloadRequired()
+  {
+    return file_exists(ReloadCronTask::getReloadFilename($this->configuration));
   }
 
   /**
@@ -253,25 +246,39 @@ class CronTask extends LoopTask
   }
 
   /**
+   * A method to wait between cron runs.
+   *
+   * A cron is scheduled at a minimum of one minute, so we wait for this time.
+   * After every ten seconds, we check whether the schedule has been changed and abort the wait, as the schedule could affect the current minute.
+   *
+   * @return void
+   */
+  protected function wait()
+  {
+    $i = 0;
+
+    while (++$i <= 6)
+    {
+      if ($this->isReloadRequired())
+      {
+        $this->reloadSchedule();
+        break;
+      }
+
+      sleep(10);
+    }
+  }
+
+  /**
    * The actual cron.
    *
-   * @todo Add a wait time while running through the schedule in order to reduce system load.
+   * @uses CronTask::wait
+   *
+   * @return void
    */
   protected function execute($arguments = array(), $options = array())
   {
-    if (empty($this->schedule))
-    {
-      /**
-       * A cron is scheduled at a minimum of one minute.
-       * If there is no entry in the crontab right now, we can wait for this one minute, reducing system load.
-       *
-       * If the RELOAD_INTERRUPT is initiated the schedule will be reloaded and the cron will run again.
-       *
-       * After this one minute, we will see, whether the interrupt has been initiated, if not, we wait another minute .. and so on.
-       */
-      sleep(60);
-    }
-    else
+    if (!empty($this->schedule))
     {
       foreach ($this->schedule as $eachCron)
       {
@@ -287,8 +294,8 @@ class CronTask extends LoopTask
           ;
         }
       }
-
-      sleep(60);
     }
+
+    $this->wait();
   }
 }

@@ -26,8 +26,20 @@ class ReloadCronTask extends CloudControlBaseTask
     parent::configure();
 
     $this->name = 'reload-cron';
-    $this->briefDescription = 'Issues an interrupt signal to reload cron process.';
-    $this->detailedDescription = 'This task will send the RELOAD_INTERRUPT signal to the current CronTask.';
+    $this->briefDescription = 'Initiate reload cron process.';
+    $this->detailedDescription = 'This task will create a reload file for the CronTask.';
+  }
+
+  /**
+   * Returns the filename of the reload cron lock file.
+   *
+   * @param sfApplicationConfiguration $configuration
+   *
+   * @return string
+   */
+  public static function getReloadFilename(sfApplicationConfiguration $configuration)
+  {
+    return CloudControlBaseTask::getSharedTempDirectory() . DIRECTORY_SEPARATOR . $configuration->getApplication() . DIRECTORY_SEPARATOR . $configuration->getEnvironment() . DIRECTORY_SEPARATOR . 'reload_cron.lck';
   }
 
   /**
@@ -37,15 +49,14 @@ class ReloadCronTask extends CloudControlBaseTask
    */
   protected function execute($arguments = array(), $options = array())
   {
-    $context = sfContext::createInstance($this->configuration);
-
     try
     {
-      $pid = CronTask::getPID($context->getConfiguration());
+      $pid = CronTask::getPID($this->configuration);
 
-      $this->logSection($this->namespace, sprintf('Sending Interrupt "%d" to process with PID "%d".', CronTask::RELOAD_INTERRUPT, $pid));
+      $filename = self::getReloadFilename($this->configuration);
 
-      posix_kill($pid, CronTask::RELOAD_INTERRUPT);
+      $this->getFilesystem()->mkdirs(dirname($filename));
+      $this->getFilesystem()->touch($filename);
     }
     catch (RuntimeException $e)
     {

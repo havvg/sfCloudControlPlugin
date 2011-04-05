@@ -106,4 +106,16 @@ abstract class CloudControlBaseTask extends InterruptableTask
   {
     return $this->returnCode;
   }
+
+  /**
+   * Returns the shared temp directory on the cloudControl infrastructure.
+   *
+   * This directory is shared among every PHP process, even if unionMount is disabled.
+   *
+   * @return string
+   */
+  final public static function getSharedTempDirectory()
+  {
+    return realpath(getenv('TMPDIR'));
+  }
 }
