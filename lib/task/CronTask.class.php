@@ -179,7 +179,7 @@ class CronTask extends LoopTask
    */
   public static function getPIDFilename(sfApplicationConfiguration $configuration)
   {
-    return sfConfig::get('sf_cache_dir') . DIRECTORY_SEPARATOR . $configuration->getApplication() . DIRECTORY_SEPARATOR . $configuration->getEnvironment() . DIRECTORY_SEPARATOR . 'cloudcontrol_cron.pid';
+    return realpath(getenv('TMPDIR')) . DIRECTORY_SEPARATOR . $configuration->getApplication() . DIRECTORY_SEPARATOR . $configuration->getEnvironment() . DIRECTORY_SEPARATOR . 'cloudcontrol_cron.pid';
   }
 
   /**
@@ -229,8 +229,11 @@ class CronTask extends LoopTask
       ->createCloudControl()
     ;
 
-    $this->getFilesystem()->touch($this->getPIDFilename($this->configuration));
-    file_put_contents($this->getPIDFilename($this->configuration), posix_getpid());
+    $filename = $this->getPIDFilename($this->configuration);
+
+    $this->getFilesystem()->mkdirs(dirname($filename));
+    $this->getFilesystem()->touch($filename);
+    file_put_contents($filename, posix_getpid());
   }
 
   /**
