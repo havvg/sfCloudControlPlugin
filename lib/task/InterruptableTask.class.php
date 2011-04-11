@@ -12,7 +12,7 @@ abstract class InterruptableTask extends sfBaseTask
    *
    * @var int
    */
-  const INTERRUPT = SIGINT;
+  const INTERRUPT = SIGTERM;
 
   /**
    * The task is requested to shut down nicely.
