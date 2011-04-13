@@ -3,8 +3,7 @@
 /**
  * This task checks whether a new worker needs to be started.
  *
- * @uses posix_getpid()
- * @uses pcntl_signal()
+ * @uses posix_getpid
  */
 class CronTask extends LoopTask
 {
@@ -35,8 +34,6 @@ class CronTask extends LoopTask
 
   /**
    * Set up information about this task.
-   *
-   * @uses pcntl_signal
    *
    * @return void
    */
