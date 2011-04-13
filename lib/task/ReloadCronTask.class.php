@@ -3,10 +3,16 @@
 class ReloadCronTask extends CloudControlBaseTask
 {
   /**
-   * (non-PHPdoc)
+   * Restart this task if aborted.
+   *
    * @see InterruptableTask::shutdown
+   *
+   * @return void
    */
-  protected function doShutdown() {}
+  protected function doShutdown()
+  {
+    $this->setReturnCode(CloudControlBaseTask::RETURN_CODE_ERROR_RESTART);
+  }
 
   /**
    * Set up information about this task.
@@ -43,7 +49,7 @@ class ReloadCronTask extends CloudControlBaseTask
   /**
    * Sends the interrupt signal for reloading crontab to the cron task, if any.
    *
-   * @return void
+   * @return int
    */
   protected function execute($arguments = array(), $options = array())
   {
@@ -55,12 +61,14 @@ class ReloadCronTask extends CloudControlBaseTask
 
       $this->getFilesystem()->mkdirs(dirname($filename));
       $this->getFilesystem()->touch($filename);
+
+      return CloudControlBaseTask::RETURN_CODE_NO_ERROR;
     }
     catch (RuntimeException $e)
     {
       if ($e->getMessage() !== CronTask::EXCEPTION_NO_PROCESS)
       {
-        throw $e;
+        throw new RuntimeException(sprintf('Caught RuntimeException in ReloadCronTask with message "%s"', $e->getMessage()), CloudControlBaseTask::RETURN_CODE_ERROR, $e);
       }
     }
   }

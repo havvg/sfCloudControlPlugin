@@ -33,7 +33,7 @@ abstract class CloudControlBaseTask extends InterruptableTask
    *
    * @var int
    */
-  private $returnCode = 0;
+  private $returnCode = self::RETURN_CODE_NO_ERROR;
 
   /**
    * Returns the list of all valid return codes mentioned above.

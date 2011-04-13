@@ -219,7 +219,7 @@ class CronTask extends LoopTask
     {
       self::getPID($this->configuration);
 
-      throw new RuntimeException(self::EXCEPTION_PROCESS_ALREADY_RUNNING);
+      throw new RuntimeException(self::EXCEPTION_PROCESS_ALREADY_RUNNING, CloudControlBaseTask::RETURN_CODE_ERROR);
     }
     catch (RuntimeException $e)
     {
