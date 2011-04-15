@@ -61,6 +61,18 @@ class sfCloudControl
   {
     $this->setApi(new CCAPI());
 
+    return $this->authenticate();
+  }
+
+  /**
+   * Authenticate against the cloudControl API.
+   *
+   * This method may be used, in case you caught an UnauthorizedException.
+   *
+   * @return sfCloudControl $this
+   */
+  public function authenticate()
+  {
     $this->getApi()->createAndSetToken($this->getConfiguration()->getUserEmail(), $this->getConfiguration()->getUserPassword());
 
     return $this;
