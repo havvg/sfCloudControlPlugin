@@ -125,14 +125,21 @@ class CronTask extends LoopTask
   /**
    * Returns a writable propel connection to the database of the Crontab.
    *
+   * @param bool $reconnect Whether to force a new connection.
+   *
    * @return PDO
    */
-  protected function getPropelConnection()
+  protected function getPropelConnection($reconnect = false)
   {
     static $connection;
 
-    if (empty($connection))
+    if ($reconnect or empty($connection))
     {
+      if ($reconnect)
+      {
+        Propel::close();
+      }
+
       $connection = Propel::getConnection(CrontabPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
     }
 
@@ -291,6 +298,23 @@ class CronTask extends LoopTask
               ->setLastRunAt(new DateTime())
               ->save($this->getPropelConnection())
             ;
+          }
+          catch (PDOException $e)
+          {
+            switch ($e->getCode())
+            {
+              /*
+               * The MySQL error "2006 MySQL server has gone away".
+               *
+               * We try again after reconnecting. The CronTask is long-running. So it is possible the connection got closed.
+               */
+              case 'HY000':
+                $eachCron->save($this->getPropelConnection(true));
+                break;
+
+              default:
+                throw $e;
+            }
           }
           /*
            * The authentication token has expired, so we refresh it and try again.
