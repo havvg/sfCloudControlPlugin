@@ -72,6 +72,13 @@ An example configuration leveraging the patched version of cloudControl includin
           password: yours3cr3tpassword
 </pre>
 
+h3. sfCloudControlMongoDBLoggerListener
+
+This is a listener to be used in conjunction with the sfMongoDBLoggerPlugin.
+In order to use it add the following line to your ProjectConfiguration (events).
+
+@$this->getEventDispatcher()->connect('mongodblog.pre_insert', array('sfCloudControlMongoDBLoggerListener', 'addWorkerId'));@
+
 h1. Testing in your environment
 
 h2. Dependencies

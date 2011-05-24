@@ -118,4 +118,35 @@ abstract class CloudControlBaseTask extends InterruptableTask
   {
     return realpath(getenv('TMPDIR'));
   }
+
+  /**
+   * Checks whether the current process is a worker.
+   *
+   * @return bool
+   */
+  final public static function isWorker()
+  {
+    $workerId = getenv('WRK_ID');
+
+    return !empty($workerId);
+  }
+
+  /**
+   * Returns the worker id of the current process.
+   *
+   * @throws RuntimeException If this process is not a worker.
+   *
+   * @return string The worker identifier.
+   */
+  final public static function getWorkerId()
+  {
+    if (!self::isWorker())
+    {
+      throw new RuntimeException('The current process is no cloudControl worker.');
+    }
+    else
+    {
+      return getenv('WRK_ID');
+    }
+  }
 }
