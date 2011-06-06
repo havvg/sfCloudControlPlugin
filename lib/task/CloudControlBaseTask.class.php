@@ -36,6 +36,13 @@ abstract class CloudControlBaseTask extends InterruptableTask
   private $returnCode = self::RETURN_CODE_NO_ERROR;
 
   /**
+   * A reference to the cloudControl wrapper.
+   *
+   * @var sfCloudControl
+   */
+  private $cloudControl;
+
+  /**
    * Returns the list of all valid return codes mentioned above.
    *
    * @return array
@@ -58,6 +65,28 @@ abstract class CloudControlBaseTask extends InterruptableTask
     parent::configure();
 
     $this->namespace = 'cloudcontrol';
+  }
+
+  /**
+   * Creates a cloudControl wrapper for further usage.
+   *
+   * @return CronTask $this
+   */
+  final protected function createCloudControl()
+  {
+    $this->cloudControl = new sfCloudControl();
+
+    return $this;
+  }
+
+  /**
+   * Returns the cloudControl wrapper.
+   *
+   * @return sfCloudControl
+   */
+  final protected function getCloudControl()
+  {
+    return $this->cloudControl;
   }
 
   /**
@@ -105,18 +134,6 @@ abstract class CloudControlBaseTask extends InterruptableTask
   final protected function getReturnCode()
   {
     return $this->returnCode;
-  }
-
-  /**
-   * Returns the shared temp directory on the cloudControl infrastructure.
-   *
-   * This directory is shared among every PHP process, even if unionMount is disabled.
-   *
-   * @return string
-   */
-  final public static function getSharedTempDirectory()
-  {
-    return realpath(getenv('TMPDIR'));
   }
 
   /**

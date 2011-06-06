@@ -2,8 +2,6 @@
 
 /**
  * This task checks whether a new worker needs to be started.
- *
- * @uses posix_getpid
  */
 class CronTask extends LoopTask
 {
@@ -26,11 +24,11 @@ class CronTask extends LoopTask
   private $schedule;
 
   /**
-   * A reference to the cloudControl wrapper.
+   * The worker id of the reload cron worker.
    *
-   * @var sfCloudControl
+   * @var string
    */
-  private $cloudControl;
+  private $reloadWorkerId = '';
 
   /**
    * Set up information about this task.
@@ -56,6 +54,16 @@ class CronTask extends LoopTask
   }
 
   /**
+   * Return the params string to identify this worker.
+   *
+   * @return string
+   */
+  public static function getWorkerParamsString()
+  {
+    return 'cloudcontrol:cron';
+  }
+
+  /**
    * Reloads the schedule of the crontab.
    *
    * @return CronTask $this
@@ -67,11 +75,6 @@ class CronTask extends LoopTask
     CrontabPeer::clearInstancePool();
 
     $this->schedule = CrontabPeer::retrieveAll();
-
-    if (file_exists(ReloadCronTask::getReloadFilename($this->configuration)))
-    {
-      $this->getFilesystem()->remove(ReloadCronTask::getReloadFilename($this->configuration));
-    }
 
     return $this;
   }
@@ -98,28 +101,6 @@ class CronTask extends LoopTask
   protected function getDatabaseManager()
   {
     return $this->databaseManager;
-  }
-
-  /**
-   * Creates a cloudControl wrapper for further usage.
-   *
-   * @return CronTask $this
-   */
-  protected function createCloudControl()
-  {
-    $this->cloudControl = new sfCloudControl();
-
-    return $this;
-  }
-
-  /**
-   * Returns the cloudControl wrapper.
-   *
-   * @return sfCloudControl
-   */
-  protected function getCloudControl()
-  {
-    return $this->cloudControl;
   }
 
   /**
@@ -156,41 +137,6 @@ class CronTask extends LoopTask
   protected function doShutdown()
   {
     $this->getDatabaseManager()->shutdown();
-    $this->getFilesystem()->remove(self::getPIDFilename($this->configuration));
-  }
-
-  /**
-   * Returns the filename for the PID file.
-   *
-   * @param sfApplicationConfiguration $configuration
-   *
-   * @return string
-   */
-  public static function getPIDFilename(sfApplicationConfiguration $configuration)
-  {
-    return CloudControlBaseTask::getSharedTempDirectory() . DIRECTORY_SEPARATOR . $configuration->getApplication() . DIRECTORY_SEPARATOR . $configuration->getEnvironment() . DIRECTORY_SEPARATOR . 'cloudcontrol_cron.pid';
-  }
-
-  /**
-   * Returns the current PID of the cron process.
-   *
-   * @throws RuntimeException If there is no cron process running.
-   *
-   * @param sfApplicationConfiguration $configuration
-   *
-   * @return int
-   */
-  public static function getPID(sfApplicationConfiguration $configuration)
-  {
-    $filename = self::getPIDFilename($configuration);
-    if (file_exists($filename) and $pid = file_get_contents($filename) and $pid = intval($pid))
-    {
-      return $pid;
-    }
-    else
-    {
-      throw new RuntimeException(self::EXCEPTION_NO_PROCESS);
-    }
   }
 
   /**
@@ -200,7 +146,30 @@ class CronTask extends LoopTask
    */
   protected function isReloadRequired()
   {
-    return file_exists(ReloadCronTask::getReloadFilename($this->configuration));
+    foreach ($this->getCloudControl()->getWorkerList() as $eachWorker)
+    {
+      $details = $this->getCloudControl()->getWorkerDetails($eachWorker->wrk_id);
+      if (strpos($details->params, ReloadCronTask::getWorkerParamsString()) === 0)
+      {
+        $this->reloadWorkerId = $eachWorker->wrk_id;
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Removes the reload cron worker.
+   *
+   * @return CronTask $this
+   */
+  protected function removeReloadCronWorker()
+  {
+    $this->getCloudControl()->removeWorker($this->reloadWorkerId);
+    $this->reloadWorkerId = '';
+
+    return $this;
   }
 
   /**
@@ -208,10 +177,6 @@ class CronTask extends LoopTask
    *
    * * Creates database manager.
    * * Loads cron schedule.
-   * * Creates a cloudControl wrapper.
-   * * Sets the PID file.
-   *
-   * @uses posix_getpid
    *
    * @see LoopTask::preExecute
    *
@@ -222,31 +187,17 @@ class CronTask extends LoopTask
    */
   protected function preExecute($arguments = array(), $options = array())
   {
-    try
-    {
-      self::getPID($this->configuration);
+    $this->createCloudControl();
 
-      throw new RuntimeException(self::EXCEPTION_PROCESS_ALREADY_RUNNING, CloudControlBaseTask::RETURN_CODE_ERROR);
-    }
-    catch (RuntimeException $e)
+    if ($this->getCloudControl()->getRunningWorkers('symfony', self::getWorkerParamsString()))
     {
-      if ($e->getMessage() !== self::EXCEPTION_NO_PROCESS)
-      {
-        throw $e;
-      }
+      throw new RuntimeException(self::EXCEPTION_PROCESS_ALREADY_RUNNING, CloudControlBaseTask::RETURN_CODE_ERROR);
     }
 
     $this
       ->createDatabaseManager()
       ->reloadSchedule()
-      ->createCloudControl()
     ;
-
-    $filename = self::getPIDFilename($this->configuration);
-
-    $this->getFilesystem()->mkdirs(dirname($filename));
-    $this->getFilesystem()->touch($filename);
-    file_put_contents($filename, posix_getpid());
   }
 
   /**
@@ -266,6 +217,8 @@ class CronTask extends LoopTask
       if ($this->isReloadRequired())
       {
         $this->reloadSchedule();
+
+        $this->removeReloadCronWorker();
         break;
       }
 
