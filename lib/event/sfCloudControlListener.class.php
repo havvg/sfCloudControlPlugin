@@ -5,7 +5,7 @@ class sfCloudControlListener
   /**
    * Add the reload cron worker on the given event.
    *
-   * The related object will be checked for changes on schedule or command line.
+   * If the event has enabled the 'validate' option set, the related object will be checked for changes on schedule or command line.
    *
    * @uses sfCloudControl::addWorker()
    *
@@ -19,37 +19,45 @@ class sfCloudControlListener
     {
       $cron =& $event['object'];
 
-      $cronModified = false;
-      if ($cron->isModified())
+      if (isset($event['validate']) and $event['validate'] == true)
       {
-        /*
-         * The list of columns that will trigger a change in crontab.
-         */
-        $columns = array(
-          CrontabPeer::SCHEDULE,
-          CrontabPeer::COMMAND,
-          CrontabPeer::PARAMETERS,
-        );
-
-        foreach ($columns as $eachColumn)
+        $cronModified = false;
+        if ($cron->isModified())
         {
-          if ($cron->isColumnModified($eachColumn))
+          /*
+           * The list of columns that will trigger a change in crontab.
+           */
+          $columns = array(
+            CrontabPeer::SCHEDULE,
+            CrontabPeer::COMMAND,
+            CrontabPeer::PARAMETERS,
+          );
+
+          foreach ($columns as $eachColumn)
           {
-            $cronModified = true;
-            break;
+            if ($cron->isColumnModified($eachColumn))
+            {
+              $cronModified = true;
+              break;
+            }
           }
         }
-      }
 
-      if (!$cron->isNew() and !$cron->isDeleted() and !$cronModified)
-      {
-        return false;
+        if (!$cron->isNew() and !$cron->isDeleted() and !$cronModified)
+        {
+          return false;
+        }
       }
 
       try
       {
         $cloudControl = new sfCloudControl();
-        return (bool) $cloudControl->addWorker('symfony', ReloadCronTask::getWorkerParamsString());
+
+        $app = sfContext::getInstance()->getConfiguration()->getApplication();
+        $env = sfContext::getInstance()->getConfiguration()->getEnvironment();
+        $cli = sprintf('%s --env=%s --application=%s', ReloadCronTask::getWorkerParamsString(), $env, $app);
+
+        return (bool) $cloudControl->addWorker('symfony', $cli);
       }
       catch (RuntimeException $e)
       {
