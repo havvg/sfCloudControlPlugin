@@ -182,4 +182,47 @@ class sfCloudControl
 
     return $workers;
   }
+
+  /**
+   * Return a list of log entries from cloudControl.
+   *
+   * @throws InvalidArgumentException If the provided filter is not callable.
+   *
+   * @param string $type A log type to retrieve. For example "access", "error" or any type implemented.
+   * @param DateTime $since A datetime of the first log entry to retrieve.
+   * @param callable $filter A filter to apply on each log entry.
+   *                         The filter returns true or false whether to add the log entry.
+   *
+   * @return array of stdClass The log entries line by line.
+   */
+  public function getLog($type, DateTime $since = null, $filter = null)
+  {
+    $entries = array();
+
+    $callable = null;
+    if (!is_null($filter) and !is_callable($filter, false, $callable))
+    {
+      throw new InvalidArgumentException('The given filter is not callable.');
+    }
+
+    if (!is_null($since))
+    {
+      $since->setTimezone(new DateTimeZone('UTC'));
+      $since = $since->format('Y-m-d H:i:s');
+    }
+
+    $logs = $this->getApi()->getLog($this->getConfiguration()->getApplicationName(), $this->getConfiguration()->getDeploymentName(), $type, $since);
+    if (!empty($logs))
+    {
+      foreach ($logs as $eachLog)
+      {
+        if (is_null($callable) or call_user_func($callable, $eachLog))
+        {
+          $entries[] = $eachLog;
+        }
+      }
+    }
+
+    return $entries;
+  }
 }
